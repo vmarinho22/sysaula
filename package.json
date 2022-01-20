@@ -1,0 +1,28 @@
+{
+  "name": "sysaulas",
+  "version": "1.0.0",
+  "description": "API para uso de sistema de escolas",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "build": "npx tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vinicius Marinho (viniciusmarinho1616@gmail.com)",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^14.2.0",
+    "express": "^4.17.2",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/morgan": "^1.9.3",
+    "@types/node": "^17.0.10",
+    "cypress": "^9.3.1",
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.4.0"
+  }
+}
