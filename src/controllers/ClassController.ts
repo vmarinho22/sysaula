@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
+import {verifyToken} from '../middleware/auth';
 
 export const ClassController = {
-    index(req: Request, res:Response) {
-        res.status(200);
-        res.json({
-            status: 1,
-            response: "Rotas Aulas"
-        });
+    async index(req: Request, res:Response) {
+
+        const token = req.body.token || req.query.token || req.headers["x-access-token"];
+        if(!await verifyToken(token)) return res.status(401).json({ status: 0, response: "Usuário não autorizado!" });        
+
     },
 
-    createClass(req: Request, res:Response) {
+    async createClass(req: Request,  res:Response) {
         res.status(200);
         res.json({
             status: 1,
@@ -17,7 +17,7 @@ export const ClassController = {
         });
     },
 
-    listClasses(req: Request, res:Response) {
+    async listClasses(req: Request, res:Response) {
         res.status(200);
         res.json({
             status: 1,
@@ -25,7 +25,7 @@ export const ClassController = {
         });
     },
 
-    getClassDetails(req: Request, res:Response) {
+    async getClassDetails(req: Request, res:Response) {
         res.status(200);
         res.json({
             status: 1,
@@ -33,7 +33,7 @@ export const ClassController = {
         });
     },
 
-    updateClassDetails(req: Request, res:Response) {
+    async updateClassDetails(req: Request, res:Response) {
         res.status(200);
         res.json({
             status: 1,
@@ -41,7 +41,7 @@ export const ClassController = {
         });
     },
 
-    destroyClass(req: Request, res:Response) {
+    async destroyClass(req: Request, res:Response) {
         res.status(200);
         res.json({
             status: 1,
@@ -49,7 +49,7 @@ export const ClassController = {
         });
     },
 
-    createCommentClass(req: Request, res:Response) {
+    async createCommentClass(req: Request, res:Response) {
         res.status(200);
         res.json({
             status: 1,
@@ -57,7 +57,7 @@ export const ClassController = {
         });
     },
 
-    listCommentClass(req: Request, res:Response) {
+    async listCommentClass(req: Request, res:Response) {
         res.status(200);
         res.json({
             status: 1,
@@ -65,7 +65,7 @@ export const ClassController = {
         });
     },
 
-    destroyCommentClass(req: Request, res:Response) {
+    async destroyCommentClass(req: Request, res:Response) {
         res.status(200);
         res.json({
             status: 1,
@@ -73,4 +73,4 @@ export const ClassController = {
         });
     },
     
-} 
+}
