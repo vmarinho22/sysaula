@@ -1,7 +1,19 @@
 import { Router } from "express";
 
-import Users from '../controllers/UsersController';
+import {UsersController} from '../controllers/UsersController';
+import {ClassController} from '../controllers/ClassController';
 
 export const routerUsers = Router();
 
-routerUsers.get('/', Users.index );
+// Users
+routerUsers.post('/', UsersController.index);
+
+// Class
+routerUsers.post('/', ClassController.createClass);
+routerUsers.get('/', ClassController.listClasses);
+routerUsers.get('/:id', ClassController.getClassDetails);
+routerUsers.put('/:id', ClassController.updateClassDetails);
+routerUsers.delete('/:id', ClassController.destroyClass);
+routerUsers.post('/comments', ClassController.createCommentClass);
+routerUsers.get('/comments', ClassController.listCommentClass);
+routerUsers.delete('/comments', ClassController.destroyCommentClass);
