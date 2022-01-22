@@ -6,14 +6,14 @@ import { Person } from "../models/User";
 
 
 export const UsersController = {
-    async index(req: Request, res:Response) {
+    async index(req: Request, res:Response) : Promise<any> {
 
         const { email, password } = req.body;
         
         const userInfos: any = await Person.findOne({email});
 
         // Validação de existencia de usuário
-        if(userInfos===null || userInfos.length === 0) res.status(404).json({ status: 0, response: "Usuário não encontrado" });
+        if(userInfos===null || userInfos.length === 0) return res.status(404).json({ status: 0, response: "Usuário não encontrado" });
 
         const hashedPassword: string = userInfos.password;
 
@@ -26,13 +26,13 @@ export const UsersController = {
                     expiresIn: "1h",
                 });
 
-                res.status(200).json({
+                return res.status(200).json({
                     status: 1,
                     response: "Usuário logado com sucesso",
                     token: token
                 });
             }else{
-                res.status(403).json({
+                return res.status(403).json({
                     status: 0,
                     response: "O usuário e a senha não coincidem!"
                 });
@@ -40,26 +40,26 @@ export const UsersController = {
         });
     },
 
-    async createUser(req: Request, res: Response) {
+    async createUser(req: Request, res: Response) : Promise<any>{
 
         const { name, email, password } = req.body;
 
         // Validações
-        if (!name) res.status(422).json({ status: 0, response: "O nome é obrigatório!" });
-        if (!email) res.status(422).json({ status: 0, response: "O email é obrigatório!" });
+        if (!name) return res.status(422).json({ status: 0, response: "O nome é obrigatório!" });
+        if (!email) return res.status(422).json({ status: 0, response: "O email é obrigatório!" });
         if (email.indexOf('@')==-1 || email.indexOf('.')==-1) res.status(422).json({ status: 0, response: "E-mail invalido!" });
-        if (!password) res.status(422).json({ status: 0, response: "A senha é obrigatória!" });
+        if (!password) return res.status(422).json({ status: 0, response: "A senha é obrigatória!" });
 
         // Criando Hash para senha
-        const saltRounds = 10;
-        const hashPassword = await bcrypt.hash(password, saltRounds);
+        const saltRounds: number = 10;
+        const hashPassword: string = await bcrypt.hash(password, saltRounds);
 
         try{
 
             const userExist: any = await Person.findOne({email});
 
             // Validação de existencia de usuário
-            if(userExist!= null || userExist.length > 0) res.status(409).json({ status: 0, response: "Usuário já existe. Por favor faça login!" });
+            if(userExist!= null || userExist.length > 0) return res.status(409).json({ status: 0, response: "Usuário já existe. Por favor faça login!" });
 
             // Criando dados no banco
             await Person.create({
@@ -68,12 +68,12 @@ export const UsersController = {
                 password: hashPassword
             });
 
-            res.status(201).json({
+            return res.status(201).json({
                 status: 1,
                 response: "Pessoa cadastrado com sucesso"
             });
         } catch(err: any){
-            res.status(500).json({
+            return res.status(500).json({
                 status: 0,
                 response: `Erro ao inserir entidade ao banco: ${err}`
             });
