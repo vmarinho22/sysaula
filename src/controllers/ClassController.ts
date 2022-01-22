@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
 import {verifyToken} from '../middleware/auth';
 
+import { Types } from 'mongoose';
+
 import { Class } from "../models/Class";
 import { Comment } from "../models/Comment";
 
 export const ClassController = {
-    
+
     async index(req: Request, res:Response) : Promise<any>{    
 
         const { name, description, data_init, data_end, page } = req.query;
@@ -23,41 +25,55 @@ export const ClassController = {
 
         try {
 
-            const schemaResult: any = await Class.find(filter).limit(50).skip(skipPage);
-
-               console.log(schemaResult);
+            const schemaResult: any = await Class.aggregate([
+                {$match:filter},
+                { $sort: { date_created: 1 } },
+                {
+                    $lookup: {
+                        from: "comments",
+                        localField: '_id',
+                        foreignField: 'id_class',
+                        as: 'comments',
+                        pipeline: [
+                            { $sort: { date_created: -1 }} ,
+                            { $limit: 1} 
+                        ]
+                    }
+                },
+                { $limit : 50 },
+                { $skip: skipPage}
+            ]);
 
             let filteredResult: object[] = [];
 
-            // let commentSchemaResult: any = {};
+            let commentSchemaResult: any = {};
 
-            // schemaResult.forEach(async (schema: any) => {
+            schemaResult.forEach(async (schema: any) => {
 
+                commentSchemaResult = schema.comments[0];
+                commentSchemaResult = (commentSchemaResult != undefined) ? commentSchemaResult : commentSchemaResult = { comment: 'Nenhum comentário cadastrado', date_created: 'null'};
 
-            //     filteredResult.push({
-            //         id: schema._id,
-            //         name: schema.name,
-            //         comment: schema.comment,
-            //         description:  schema.description,
-            //         video:  schema.video,
-            //         data_init:  schema.data_init,
-            //         data_end:  schema.data_end,
-            //         date_create:  schema.date_create,
-            //         date_update:  schema.date_update,
-            //         total_comments:  schema.total_comments,
-            //         last_comment: commentSchemaResult.comment,
-            //         last_comment_date:  commentSchemaResult.date_created
-            //     });
-            // });
-
-            // console.log(filteredResult)
+                filteredResult.push({
+                    id: schema._id,
+                    name: schema.name,
+                    comment: schema.comment,
+                    description:  schema.description,
+                    video:  schema.video,
+                    data_init:  schema.data_init,
+                    data_end:  schema.data_end,
+                    date_create:  schema.date_create,
+                    date_update:  schema.date_update,
+                    total_comments:  schema.total_comments,
+                    last_comment: commentSchemaResult.comment,
+                    last_comment_date:  commentSchemaResult.date_created
+                });
+            });
 
             return res.status(200).json({
                 status: 1,
                 response: filteredResult,
             });
             
-
         } catch(err: any){
             return res.status(500).json({
                 status: 0,
@@ -114,20 +130,53 @@ export const ClassController = {
         
         const { id } = req.params;
 
+        let objectId: object = new Types.ObjectId(id);
+
         // Validações
         if (!id) return res.status(422).json({ status: 0, response: "ID obrigatório" });
 
         try {
 
-            const schemaResult: any = await Class.findById(id);
+            // const schemaResult: any = await Class.findById(id);
+
+            const schemaResult: any = await Class.aggregate([
+                {$match: {_id: objectId}},
+                {
+                    $lookup: {
+                        from: "comments",
+                        localField: '_id',
+                        foreignField: 'id_class',
+                        as: 'comments',
+                        pipeline: [
+                            { $sort: { date_created: -1 }} ,
+                            { $limit: 3} 
+                        ]
+                    }
+                },
+            ]);
+
+            const resultSchema: any = schemaResult[0];
+            
+            const comments: any = resultSchema.comments;
+            const commentsFilter: string[] = [];
+
+            if(comments != undefined && comments.length > 0) {
+                comments.forEach((comment: any) => {
+                    commentsFilter.push(comment.comment);
+                });
+            }else{
+                commentsFilter.push('Nenhum comentário cadastrado!'
+                );
+            }
 
             const formatedResult: object = {
-                name: schemaResult.name,
-                description:  schemaResult.description,
-                video:  schemaResult.video,
-                data_init:  schemaResult.data_init,
-                data_end:  schemaResult.data_end,
-                total_comments:  schemaResult.total_comments,
+                name: resultSchema.name,
+                description:  resultSchema.description,
+                video:  resultSchema.video,
+                data_init:  resultSchema.data_init,
+                data_end:  resultSchema.data_end,
+                total_comments:  resultSchema.total_comments,
+                comments: commentsFilter
             }
 
             // Mostrar os ultimos 3 comentarios
@@ -156,8 +205,6 @@ export const ClassController = {
         if (data_end != undefined && !new Date(data_init).getDate()) return res.status(422).json({ status: 0, response: "Data de termino da aula invalida!" });
 
         const currentDate: Date = new Date();
-
-        console.log('aqui entrou')
 
         let filter: any = {}
 
@@ -299,7 +346,13 @@ export const ClassController = {
 
         try {
 
-            await Comment.findByIdAndRemove(id);
+            const getIdClass : any = await Comment.findById(id);
+
+            const idClass = getIdClass.id_class;
+
+            await Comment.findByIdAndRemove(id); 
+
+            await Class.findOneAndUpdate({ _id: idClass }, { $inc: { total_comments: -1 }});
 
             return res.status(200).json({
                 status: 1,

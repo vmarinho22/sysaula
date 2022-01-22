@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 export const Comment: any = mongoose.model('Comments', new mongoose.Schema({
     id_class: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: "Class"
     },
     comment: {
         type: String,

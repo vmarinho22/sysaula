@@ -34,6 +34,5 @@ export const Class: any = mongoose.model('Classes', new mongoose.Schema({
     total_comments:  {
         type     : Number,
         required : true,
-        
-      }
+    }
 }));
