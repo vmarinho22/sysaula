@@ -5,11 +5,8 @@ import { Class } from "../models/Class";
 import { Comment } from "../models/Comment";
 
 export const ClassController = {
-    async index(req: Request, res:Response) : Promise<any>{
-
-        // Validação de token
-        const token = req.body.token || req.query.token || req.headers["x-access-token"];
-        if(!await verifyToken(token)) return res.status(401).json({ status: 0, response: "Usuário não autorizado!" });        
+    
+    async index(req: Request, res:Response) : Promise<any>{    
 
         const { name, description, data_init, data_end, page } = req.query;
 
@@ -71,10 +68,7 @@ export const ClassController = {
     },
 
     async createClass(req: Request,  res:Response) : Promise<any>{
-
-        // Validação de token
-        const token = req.body.token || req.query.token || req.headers["x-access-token"];
-        if(!await verifyToken(token)) return res.status(401).json({ status: 0, response: "Usuário não autorizado!" });        
+    
 
         const { name, description, video, data_init, data_end } = req.body;
 
@@ -117,9 +111,6 @@ export const ClassController = {
     },
 
     async getClassDetails(req: Request, res:Response) : Promise<any>{
-        // Validação de token
-        const token = req.body.token || req.query.token || req.headers["x-access-token"];
-        if(!await verifyToken(token)) return res.status(401).json({ status: 0, response: "Usuário não autorizado!" });
         
         const { id } = req.params;
 
@@ -154,10 +145,7 @@ export const ClassController = {
         }
     },
 
-    async updateClassDetails(req: Request, res:Response) : Promise<any> {
-        // Validação de token
-        const token = req.body.token || req.query.token || req.headers["x-access-token"];
-        if(!await verifyToken(token)) return res.status(401).json({ status: 0, response: "Usuário não autorizado!" });        
+    async updateClassDetails(req: Request, res:Response) : Promise<any> {    
 
         const { id ,name, description, video, data_init, data_end } = req.body;
         
@@ -207,9 +195,6 @@ export const ClassController = {
     },
 
     async destroyClass(req: Request, res:Response) : Promise<any>{
-        // Validação de token
-        const token = req.body.token || req.query.token || req.headers["x-access-token"];
-        if(!await verifyToken(token)) return res.status(401).json({ status: 0, response: "Usuário não autorizado!" });
         
         const { id } = req.params;
 
@@ -234,9 +219,6 @@ export const ClassController = {
     },
 
     async createCommentClass(req: Request, res:Response) : Promise<any>{
-        // Validação de token
-        const token = req.body.token || req.query.token || req.headers["x-access-token"];
-        if(!await verifyToken(token)) return res.status(401).json({ status: 0, response: "Usuário não autorizado!" });
 
         const {id_class, comment} = req.body;
 
@@ -271,10 +253,7 @@ export const ClassController = {
         }
     },
 
-    async listCommentClass(req: Request, res:Response) : Promise<any>{
-        // Validação de token
-        const token = req.body.token || req.query.token || req.headers["x-access-token"];
-        if(!await verifyToken(token)) return res.status(401).json({ status: 0, response: "Usuário não autorizado!" });        
+    async listCommentClass(req: Request, res:Response) : Promise<any>{    
 
         const { page } = req.query;
 
@@ -312,9 +291,6 @@ export const ClassController = {
     },
 
     async destroyCommentClass(req: Request, res:Response) : Promise<any>{
-        // Validação de token
-        const token = req.body.token || req.query.token || req.headers["x-access-token"];
-        if(!await verifyToken(token)) return res.status(401).json({ status: 0, response: "Usuário não autorizado!" });
         
         const { id } = req.params;
 

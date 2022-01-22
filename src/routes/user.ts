@@ -1,10 +1,15 @@
 import { Router } from "express";
+import {verifyToken} from '../middleware/auth';
 
 import {UsersController} from '../controllers/UsersController';
 
 export const routerUsers = Router();
 
 // Users
-routerUsers.post('/', UsersController.index);
-routerUsers.post('/create', UsersController.createUser);
+routerUsers.route('/')
+        .post(UsersController.index);
+
+routerUsers.route('/create')
+        .all(verifyToken)
+        .post(UsersController.createUser);
 
