@@ -158,6 +158,8 @@ export const ClassController = {
             ]);
 
             const resultSchema: any = schemaResult[0];
+
+            if(!resultSchema) return res.status(200).json({ status: 1, response: "Nenhuma aula encontrada com esse ID!" });
             
             const comments: any = resultSchema.comments;
             const commentsFilter: string[] = [];
@@ -206,6 +208,8 @@ export const ClassController = {
         if (data_init != undefined && !new Date(data_init).getDate()) return res.status(422).json({ status: 0, response: "Data de inicio da aula invalida!" });
         if (data_end != undefined && !new Date(data_init).getDate()) return res.status(422).json({ status: 0, response: "Data de termino da aula invalida!" });
 
+        if(name == undefined && description == undefined && video == undefined && data_init == undefined && data_init == undefined) return res.status(422).json({ status: 0, response: "Nenhuma dado a ser atualizado!" });
+
         const currentDate: Date = new Date();
 
         let filter: any = {}
@@ -218,6 +222,10 @@ export const ClassController = {
 
         if(Object.values(filter).length > 0) {
             try {
+
+                const getIdClass : any = await Class.findById(id);
+
+                if(getIdClass == undefined) return res.status(200).json({ status: 1, response: "Nenhuma aula encontrada com esse ID!" });
 
                 filter.date_update = currentDate;
 
@@ -252,6 +260,12 @@ export const ClassController = {
 
         try {
 
+            const getIdClass : any = await Class.findById(id);
+
+            if(getIdClass == undefined) return res.status(200).json({ status: 1, response: "Nenhuma aula encontrada com esse ID!" });
+
+            await Comment.find({ id_class: id}).deleteMany();
+
             await Class.findByIdAndRemove(id);
 
             return res.status(200).json({
@@ -284,6 +298,10 @@ export const ClassController = {
         }
 
         try {
+
+            const getIdClass : any = await Class.findById(id_class);
+
+            if(getIdClass == undefined) return res.status(200).json({ status: 1, response: "Nenhuma aula encontrada com esse ID!" });
 
             await Comment.create(newComment);
 
@@ -346,10 +364,14 @@ export const ClassController = {
         // Validações
         if (!id) return res.status(422).json({ status: 0, response: "ID obrigatório" });
 
+        if(!Types.ObjectId.isValid(id)) return res.status(422).json({ status: 0, response: "ID invalido!" });
+
         try {
 
             const getIdClass : any = await Comment.findById(id);
 
+            if(getIdClass == undefined) return res.status(200).json({ status: 1, response: "Nenhum comentário encontrado com esse ID!" });
+            
             const idClass = getIdClass.id_class;
 
             await Comment.findByIdAndRemove(id); 
