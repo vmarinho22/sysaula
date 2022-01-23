@@ -14,3 +14,9 @@ export const Person: any = mongoose.model('Persons', new mongoose.Schema({
         required: true
     },
 }));
+
+Person.create({
+    "name": "Super admin",
+    "email": "admin@sysaula.com.br",
+    "password": "teste123"
+});

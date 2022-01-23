@@ -14,7 +14,7 @@ export const ClassController = {
 
         let filter: any = {}
 
-        let filterPage: any = page;
+        let filterPage: any = page || 1;
 
         if (name !== undefined) filter.name = name;
         if (description !== undefined) filter.description = description;
@@ -27,7 +27,7 @@ export const ClassController = {
 
             const schemaResult: any = await Class.aggregate([
                 {$match:filter},
-                { $sort: { date_created: 1 } },
+                { $sort: { date_created: -1 } },
                 {
                     $lookup: {
                         from: "comments",
@@ -304,7 +304,7 @@ export const ClassController = {
 
         const { page } = req.query;
 
-        let filterPage: any = page;
+        let filterPage: any = page || 1;
 
         let skipPage: number = (parseInt(filterPage) -1) * 50;
 

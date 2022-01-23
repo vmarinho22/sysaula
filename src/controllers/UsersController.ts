@@ -9,6 +9,10 @@ export const UsersController = {
     async index(req: Request, res:Response) : Promise<any> {
 
         const { email, password } = req.body;
+
+        // Validações
+        if (!email) return res.status(422).json({ status: 0, response: "O email obrigatório!" });
+        if (!password) return res.status(422).json({ status: 0, response: "A senha é obrigatória!" });
         
         const userInfos: any = await Person.findOne({email});
 
@@ -58,8 +62,10 @@ export const UsersController = {
 
             const userExist: any = await Person.findOne({email});
 
+            console.log(userExist)
+
             // Validação de existencia de usuário
-            if(userExist!= null || userExist.length > 0) return res.status(409).json({ status: 0, response: "Usuário já existe. Por favor faça login!" });
+            if(userExist!= null && userExist.email == email) return res.status(409).json({ status: 0, response: "Usuário já existe. Por favor faça login!" });
 
             // Criando dados no banco
             await Person.create({
