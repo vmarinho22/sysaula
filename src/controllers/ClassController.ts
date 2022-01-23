@@ -130,7 +130,9 @@ export const ClassController = {
         
         const { id } = req.params;
 
-        let objectId: object = new Types.ObjectId(id);
+        if(!Types.ObjectId.isValid(id)) return res.status(422).json({ status: 0, response: "ID invalido!" });
+
+        const objectId: object | string = new Types.ObjectId(id.trim());
 
         // Validações
         if (!id) return res.status(422).json({ status: 0, response: "ID obrigatório" });
