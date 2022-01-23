@@ -319,3 +319,6 @@ Retorno: Status e response avisando que o comentário foi deletado!
  - [Nodemon](https://www.npmjs.com/package/nodemon)
  - [TS-Node](https://www.npmjs.com/package/ts-node)
 
+## Bônus
+
+Dentro da pasta `postman` tem a colletion e a environment prontas para utilizar, bastando importar no POSTMAN
