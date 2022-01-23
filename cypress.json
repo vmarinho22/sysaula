@@ -1,0 +1,8 @@
+{
+    "env": {
+        "url": "http://localhost:3500/",
+        "login": "admin@sysaula.com.br",
+        "password": "teste123",
+        "page": 1
+    }
+}
