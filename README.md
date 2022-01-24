@@ -24,11 +24,6 @@ Também foi utilizando a biblioteca [Mongoose](https://mongoosejs.com/), é uma 
 
 Para realização dos testes unitários, foi utilizado a biblioteca [Cypress](https://www.cypress.io/), que é uma plataforma Javascript para testes end-to-end, com uma interface poderosa e bem explicativa, além de facíl compreensão dos resultados
 
-**Sobre o Deploy da Aplicação na AWS**
-
-Não tenho muita experiência em deploy com AWS, mas com toda certeza utilizaria a tecnologia dos Containers para realizar esse deploy, como Docker e Kubernets, para mantém minha aplicação isolada com alta performance. Mas segundo minhas pesquisas, o melhor ambiente para realizar esse deploy é utilizar **AWS EC2**, pois é uma ambiente elástico com memória RAM dedicada, ambiente pronto para receber imagens de container, com SSH já integrado e um deploy realtivamento simples, bastando subir o build da aplicação!
-
-
 ## Stack utilizada
 
 **Back-end:** NodeJS, Express, Typescript, Bcrypt, Cors, DotEnv, JsonWebToken, Mongoose, Morgam, Nodemon, TS-Node.
